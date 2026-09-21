@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>雙北公車測試系統</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      padding: 24px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      background: #f3f6fa;
+      color: #202124;
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Noto Sans TC",
+        "Microsoft JhengHei",
+        sans-serif;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 520px;
+
+      padding: 48px 36px 38px;
+
+      background: white;
+
+      border-radius: 22px;
+
+      box-shadow:
+        0 10px 35px
+        rgba(0, 0, 0, 0.10);
+    }
+
+    .bus-icon {
+      margin-bottom: 14px;
+
+      text-align: center;
+
+      font-size: 46px;
+      line-height: 1;
+    }
+
+    h1 {
+      margin: 0;
+
+      color: #1565c0;
+
+      text-align: center;
+
+      font-size: 30px;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+
+      text-align: center;
+
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .warning {
+      margin-top: 24px;
+
+      padding: 15px 16px;
+
+      background: #fff7df;
+
+      border-radius: 12px;
+
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .form {
+      margin-top: 30px;
+    }
+
+    label {
+      display: block;
+
+      margin-bottom: 8px;
+
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      height: 50px;
+
+      margin-bottom: 22px;
+      padding: 0 14px;
+
+      border: 1px solid #bfc3c7;
+      border-radius: 10px;
+
+      background: white;
+
+      font-size: 17px;
+
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #1976d2;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(25, 118, 210, 0.12);
+    }
+
+    button {
+      min-height: 48px;
+
+      border: 0;
+      border-radius: 10px;
+
+      padding: 0 18px;
+
+      background: #1976d2;
+      color: white;
+
+      font-size: 16px;
+      font-weight: 700;
+
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1565c0;
+    }
+
+    button:disabled {
+      background: #9e9e9e;
+      cursor: not-allowed;
+    }
+
+    .full-button {
+      width: 100%;
+      height: 54px;
+
+      font-size: 18px;
+    }
+
+    .secondary-button {
+      background: #eceff1;
+      color: #263238;
+    }
+
+    .secondary-button:hover {
+      background: #cfd8dc;
+    }
+
+    .danger-button {
+      background: #d32f2f;
+    }
+
+    .danger-button:hover {
+      background: #b71c1c;
+    }
+
+    .success-button {
+      background: #2e7d32;
+    }
+
+    .success-button:hover {
+      background: #1b5e20;
+    }
+
+    .message {
+      min-height: 22px;
+
+      margin-top: 12px;
+
+      text-align: center;
+
+      font-size: 14px;
+    }
+
+    .contact {
+      margin-top: 38px;
+      padding-top: 26px;
+
+      border-top: 1px solid #dedede;
+
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.7;
+    }
+
+    .footer {
+      margin-top: 34px;
+
+      color: #777;
+
+      text-align: center;
+
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    /* ==========================
+       管理員後台
+       ========================== */
+
+    #adminPage {
+      display: none;
+
+      width: 100%;
+      max-width: 850px;
+    }
+
+    .admin-card {
+      width: 100%;
+
+      padding: 32px;
+
+      background: white;
+
+      border-radius: 22px;
+
+      box-shadow:
+        0 10px 35px
+        rgba(0, 0, 0, 0.10);
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+
+      margin-bottom: 28px;
+    }
+
+    .admin-title {
+      margin: 0;
+
+      color: #1565c0;
+
+      font-size: 28px;
+    }
+
+    .admin-user {
+      margin-top: 5px;
+
+      color: #666;
+
+      font-size: 14px;
+    }
+
+    .admin-section {
+      margin-top: 26px;
+      padding-top: 26px;
+
+      border-top: 1px solid #ddd;
+    }
+
+    .admin-section h2 {
+      margin-top: 0;
+
+      font-size: 21px;
+    }
+
+    .create-grid {
+      display: grid;
+
+      grid-template-columns:
+        1fr 1fr 150px;
+
+      gap: 12px;
+    }
+
+    .create-grid input,
+    .create-grid select {
+      margin-bottom: 0;
+    }
+
+    .create-button {
+      margin-top: 12px;
+    }
+
+    .users {
+      margin-top: 16px;
+
+      display: flex;
+      flex-direction: column;
+
+      gap: 12px;
+    }
+
+    .user-row {
+      padding: 16px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+
+      border: 1px solid #ddd;
+      border-radius: 12px;
+    }
+
+    .user-name {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .user-info {
+      margin-top: 5px;
+
+      color: #666;
+
+      font-size: 13px;
+    }
+
+    .badge {
+      display: inline-block;
+
+      margin-left: 7px;
+      padding: 3px 7px;
+
+      border-radius: 6px;
+
+      background: #e3f2fd;
+      color: #1565c0;
+
+      font-size: 12px;
+    }
+
+    .disabled-badge {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .user-actions {
+      flex-shrink: 0;
+
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .user-actions button {
+      min-width: 90px;
+    }
+
+    #testerPage {
+      display: none;
+
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .tester-content {
+      text-align: center;
+    }
+
+    .tester-content p {
+      line-height: 1.7;
+    }
+
+    @media (max-width: 650px) {
+      body {
+        align-items: flex-start;
+
+        padding: 14px;
+      }
+
+      .card {
+        margin-top: 18px;
+
+        padding: 36px 20px 30px;
+
+        border-radius: 18px;
+      }
+
+      .admin-card {
+        padding: 22px 16px;
+      }
+
+      .admin-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .create-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .user-row {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .user-actions,
+      .user-actions button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+
+<body>
+
+  <!-- ==========================================
+       登入頁
+       ========================================== -->
+
+  <main
+    id="loginPage"
+    class="card"
+  >
+
+    <div class="bus-icon">
+      🚌
+    </div>
+
+    <h1>
+      本系統測試中
+    </h1>
+
+    <div class="subtitle">
+      僅供測試人員查看
+    </div>
+
+
+    <div class="warning">
+      本系統目前為測試版本，公車資料可能出現延遲、
+      缺漏或錯誤，請勿作為乘車時間的唯一依據。
+    </div>
+
+
+    <form
+      class="form"
+      id="loginForm"
+    >
+
+      <label for="username">
+        帳號
+      </label>
+
+      <input
+        id="username"
+        type="text"
+        autocomplete="username"
+        required
+      >
+
+
+      <label for="password">
+        密碼
+      </label>
+
+      <input
+        id="password"
+        type="password"
+        autocomplete="current-password"
+        required
+      >
+
+
+      <button
+        id="loginButton"
+        class="full-button"
+        type="submit"
+      >
+        登入
+      </button>
+
+
+      <div
+        id="loginMessage"
+        class="message"
+      ></div>
+
+    </form>
+
+
+    <section class="contact">
+      若有帳號密碼問題，請洽作者
+      （若遺失聯絡資料，恕不補發）
+    </section>
+
+
+    <div class="footer">
+      雙北公車測試系統
+      <br>
+      本系統目前僅供封閉測試使用
+    </div>
+
+  </main>
+
+
+  <!-- ==========================================
+       管理員後台
+       ========================================== -->
+
+  <main id="adminPage">
+
+    <div class="admin-card">
+
+      <div class="admin-header">
+
+        <div>
+          <h1 class="admin-title">
+            🚌 管理員後台
+          </h1>
+
+          <div
+            id="adminUsername"
+            class="admin-user"
+          ></div>
+        </div>
+
+
+        <button
+          class="secondary-button"
+          onclick="logout()"
+        >
+          登出
+        </button>
+
+      </div>
+
+
+      <div class="warning">
+        只有管理員可以建立、停用、恢復或永久刪除測試帳號。
+        密碼建立後不會在此頁顯示。
+      </div>
+
+
+      <section class="admin-section">
+
+        <h2>
+          ➕ 新增帳號
+        </h2>
+
+
+        <div class="create-grid">
+
+          <input
+            id="newUsername"
+            type="text"
+            placeholder="帳號"
+          >
+
+          <input
+            id="newPassword"
+            type="password"
+            placeholder="初始密碼（至少 8 字元）"
+          >
+
+          <select id="newRole">
+            <option value="tester">
+              測試人員
+            </option>
+
+            <option value="admin">
+              管理員
+            </option>
+          </select>
+
+        </div>
+
+
+        <button
+          class="create-button"
+          onclick="createUser()"
+        >
+          建立帳號
+        </button>
+
+
+        <div
+          id="createMessage"
+          class="message"
+        ></div>
+
+      </section>
+
+
+      <section class="admin-section">
+
+        <h2>
+          👥 帳號列表
+        </h2>
+
+
+        <button
+          class="secondary-button"
+          onclick="loadUsers()"
+        >
+          重新整理
+        </button>
+
+
+        <div
+          id="users"
+          class="users"
+        >
+          讀取中……
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <!-- ==========================================
+       一般測試人員暫時頁面
+       之後會換成 Flutter Web
+       ========================================== -->
+
+  <main
+    id="testerPage"
+    class="card"
+  >
+
+    <div class="tester-content">
+
+      <div class="bus-icon">
+        🚌
+      </div>
+
+      <h1>
+        登入成功
+      </h1>
+
+      <p>
+        測試人員帳號驗證成功。
+      </p>
+
+      <p>
+        下一階段會在這裡載入雙北公車系統。
+      </p>
+
+      <button
+        class="full-button"
+        onclick="logout()"
+      >
+        登出
+      </button>
+
+    </div>
+
+  </main>
+
+
+  <script>
+
+    /* ==========================================
+       API 設定
+
+       現在本機測試：
+       http://127.0.0.1:8000
+
+       正式部署時再改成正式 API 網址。
+       ========================================== */
+
+    const API_BASE =
+      "http://127.0.0.1:8000";
+
+
+    let authToken =
+      sessionStorage.getItem(
+        "bus_auth_token"
+      );
+
+
+    let currentUser = null;
+
+
+
+    /* ==========================================
+       共用 API
+       ========================================== */
+
+    async function apiFetch(
+      path,
+      options = {}
+    ) {
+
+      const headers = {
+        "Content-Type":
+          "application/json",
+
+        ...(options.headers || {})
+      };
+
+
+      if (authToken) {
+
+        headers["Authorization"] =
+          "Bearer " + authToken;
+
+      }
+
+
+      const response =
+        await fetch(
+          API_BASE + path,
+          {
+            ...options,
+            headers
+          }
+        );
+
+
+      let data = {};
+
+      try {
+
+        data =
+          await response.json();
+
+      } catch (_) {
+
+        data = {};
+
+      }
+
+
+	if (!response.ok) {
+	
+	console.error(
+		"API 錯誤：",
+		response.status,
+		data
+	);
+	
+	const message =
+		typeof data.detail === "string"
+		? data.detail
+		: JSON.stringify(data);
+	
+	throw new Error(message);
+	
+	}
+
+
+      return data;
+
+    }
+
+
+
+    /* ==========================================
+       頁面切換
+       ========================================== */
+
+    function showLogin() {
+
+      document
+        .getElementById("loginPage")
+        .style.display = "block";
+
+      document
+        .getElementById("adminPage")
+        .style.display = "none";
+
+      document
+        .getElementById("testerPage")
+        .style.display = "none";
+
+    }
+
+
+    function showAdmin() {
+
+      document
+        .getElementById("loginPage")
+        .style.display = "none";
+
+      document
+        .getElementById("adminPage")
+        .style.display = "block";
+
+      document
+        .getElementById("testerPage")
+        .style.display = "none";
+
+
+      document
+        .getElementById(
+          "adminUsername"
+        )
+        .textContent =
+          "目前登入：" +
+          currentUser.username;
+
+
+      loadUsers();
+
+    }
+
+
+    function showTester() {
+
+      document
+        .getElementById("loginPage")
+        .style.display = "none";
+
+      document
+        .getElementById("adminPage")
+        .style.display = "none";
+
+      document
+        .getElementById("testerPage")
+        .style.display = "block";
+
+    }
+
+
+
+    /* ==========================================
+       登入
+       ========================================== */
+
+    document
+      .getElementById("loginForm")
+      .addEventListener(
+        "submit",
+        async (event) => {
+
+          event.preventDefault();
+
+
+          const username =
+            document
+              .getElementById(
+                "username"
+              )
+              .value
+              .trim();
+
+
+          const password =
+            document
+              .getElementById(
+                "password"
+              )
+              .value;
+
+
+          const button =
+            document
+              .getElementById(
+                "loginButton"
+              );
+
+
+          const message =
+            document
+              .getElementById(
+                "loginMessage"
+              );
+
+
+          button.disabled = true;
+
+          button.textContent =
+            "登入中……";
+
+
+          message.textContent = "";
+
+
+
+          try {
+
+            const data =
+              await apiFetch(
+                "/api/auth/login",
+                {
+                  method: "POST",
+
+                  body:
+                    JSON.stringify({
+                      username,
+                      password
+                    })
+                }
+              );
+
+
+            authToken =
+              data.token;
+
+
+            currentUser =
+              data.user;
+
+
+            sessionStorage.setItem(
+              "bus_auth_token",
+              authToken
+            );
+
+
+            document
+              .getElementById(
+                "password"
+              )
+              .value = "";
+
+
+            if (
+              currentUser.role ===
+              "admin"
+            ) {
+
+              showAdmin();
+
+            } else {
+
+              showTester();
+
+            }
+
+          } catch (error) {
+
+            message.style.color =
+              "#c62828";
+
+            message.textContent =
+              error.message;
+
+          } finally {
+
+            button.disabled =
+              false;
+
+            button.textContent =
+              "登入";
+
+          }
+
+        }
+      );
+
+
+
+    /* ==========================================
+       檢查既有登入
+       ========================================== */
+
+    async function restoreLogin() {
+
+      if (!authToken) {
+
+        showLogin();
+
+        return;
+
+      }
+
+
+      try {
+
+        const data =
+          await apiFetch(
+            "/api/auth/me"
+          );
+
+
+        currentUser =
+          data.user;
+
+
+        if (
+          currentUser.role ===
+          "admin"
+        ) {
+
+          showAdmin();
+
+        } else {
+
+          showTester();
+
+        }
+
+      } catch (_) {
+
+        authToken = null;
+
+        currentUser = null;
+
+        sessionStorage.removeItem(
+          "bus_auth_token"
+        );
+
+        showLogin();
+
+      }
+
+    }
+
+
+
+    /* ==========================================
+       登出
+       ========================================== */
+
+    async function logout() {
+
+      try {
+
+        if (authToken) {
+
+          await apiFetch(
+            "/api/auth/logout",
+            {
+              method: "POST"
+            }
+          );
+
+        }
+
+      } catch (_) {
+
+        // 即使後端登出失敗，
+        // 前端仍然清除登入資料。
+
+      }
+
+
+      authToken = null;
+
+      currentUser = null;
+
+
+      sessionStorage.removeItem(
+        "bus_auth_token"
+      );
+
+
+      document
+        .getElementById(
+          "username"
+        )
+        .value = "";
+
+
+      document
+        .getElementById(
+          "password"
+        )
+        .value = "";
+
+
+      showLogin();
+
+    }
+
+
+
+    /* ==========================================
+       管理員：讀取帳號
+       ========================================== */
+
+    async function loadUsers() {
+
+      const container =
+        document.getElementById(
+          "users"
+        );
+
+
+      container.textContent =
+        "讀取中……";
+
+
+      try {
+
+        const data =
+          await apiFetch(
+            "/api/admin/users"
+          );
+
+
+        container.innerHTML = "";
+
+
+        if (
+          !data.users ||
+          data.users.length === 0
+        ) {
+
+          container.textContent =
+            "目前沒有帳號";
+
+          return;
+
+        }
+
+
+        for (
+          const user
+          of data.users
+        ) {
+
+          const row =
+            document.createElement(
+              "div"
+            );
+
+
+          row.className =
+            "user-row";
+
+
+          const info =
+            document.createElement(
+              "div"
+            );
+
+
+          const name =
+            document.createElement(
+              "div"
+            );
+
+
+          name.className =
+            "user-name";
+
+
+          name.textContent =
+            user.username;
+
+
+          const role =
+            document.createElement(
+              "span"
+            );
+
+
+          role.className =
+            "badge";
+
+
+          role.textContent =
+            user.role === "admin"
+              ? "管理員"
+              : "測試人員";
+
+
+          name.appendChild(role);
+
+
+          if (!user.enabled) {
+
+            const disabled =
+              document.createElement(
+                "span"
+              );
+
+
+            disabled.className =
+              "badge disabled-badge";
+
+
+            disabled.textContent =
+              "已停用";
+
+
+            name.appendChild(
+              disabled
+            );
+
+          }
+
+
+          const details =
+            document.createElement(
+              "div"
+            );
+
+
+          details.className =
+            "user-info";
+
+
+          details.textContent =
+            "帳號 ID：" +
+            user.id;
+
+
+          info.appendChild(name);
+
+          info.appendChild(
+            details
+          );
+
+
+          row.appendChild(info);
+
+
+
+          const actions =
+            document.createElement(
+              "div"
+            );
+
+
+          actions.className =
+            "user-actions";
+
+
+          /*
+           * 不讓目前登入中的管理員
+           * 停用自己。
+           */
+
+          if (
+            user.id !==
+            currentUser.id
+          ) {
+
+            const actionButton =
+              document.createElement(
+                "button"
+              );
+
+
+            if (user.enabled) {
+
+              actionButton.textContent =
+                "停用";
+
+              actionButton.className =
+                "danger-button";
+
+            } else {
+
+              actionButton.textContent =
+                "恢復";
+
+              actionButton.className =
+                "success-button";
+
+            }
+
+
+            actionButton.onclick =
+              () =>
+                setUserEnabled(
+                  user.id,
+                  !user.enabled
+                );
+
+
+            actions.appendChild(
+              actionButton
+            );
+
+
+            if (user.role === "tester") {
+
+              const deleteButton =
+                document.createElement(
+                  "button"
+                );
+
+
+              deleteButton.textContent =
+                "永久刪除";
+
+              deleteButton.className =
+                "danger-button";
+
+
+              deleteButton.onclick =
+                () =>
+                  deleteUser(
+                    user.id,
+                    user.username
+                  );
+
+
+              actions.appendChild(
+                deleteButton
+              );
+
+            }
+
+          } else {
+
+            const selfText =
+              document.createElement(
+                "span"
+              );
+
+
+            selfText.className =
+              "user-info";
+
+
+            selfText.textContent =
+              "目前帳號";
+
+
+            actions.appendChild(
+              selfText
+            );
+
+          }
+
+
+          row.appendChild(
+            actions
+          );
+
+
+          container.appendChild(
+            row
+          );
+
+        }
+
+      } catch (error) {
+
+        container.textContent =
+          "讀取失敗：" +
+          error.message;
+
+      }
+
+    }
+
+
+
+    /* ==========================================
+       管理員：新增帳號
+       ========================================== */
+
+    async function createUser() {
+
+      const username =
+        document
+          .getElementById(
+            "newUsername"
+          )
+          .value
+          .trim();
+
+
+      const password =
+        document
+          .getElementById(
+            "newPassword"
+          )
+          .value;
+
+
+      const role =
+        document
+          .getElementById(
+            "newRole"
+          )
+          .value;
+
+
+      const message =
+        document
+          .getElementById(
+            "createMessage"
+          );
+
+
+      message.textContent = "";
+
+
+      if (!username) {
+
+        message.style.color =
+          "#c62828";
+
+        message.textContent =
+          "請輸入帳號";
+
+        return;
+
+      }
+
+
+      if (
+        password.length < 8
+      ) {
+
+        message.style.color =
+          "#c62828";
+
+        message.textContent =
+          "密碼至少需要 8 個字元";
+
+        return;
+
+      }
+
+
+      try {
+
+        await apiFetch(
+          "/api/admin/users",
+          {
+            method: "POST",
+
+            body:
+              JSON.stringify({
+                username,
+                password,
+                role
+              })
+          }
+        );
+
+
+        document
+          .getElementById(
+            "newUsername"
+          )
+          .value = "";
+
+
+        document
+          .getElementById(
+            "newPassword"
+          )
+          .value = "";
+
+
+        document
+          .getElementById(
+            "newRole"
+          )
+          .value =
+            "tester";
+
+
+        message.style.color =
+          "#2e7d32";
+
+
+        message.textContent =
+          "帳號建立成功";
+
+
+        await loadUsers();
+
+      } catch (error) {
+
+        message.style.color =
+          "#c62828";
+
+
+        message.textContent =
+          error.message;
+
+      }
+
+    }
+
+
+
+    /* ==========================================
+       管理員：停用 / 恢復帳號
+       ========================================== */
+
+    async function setUserEnabled(
+      userId,
+      enabled
+    ) {
+
+      const action =
+        enabled
+          ? "恢復"
+          : "停用";
+
+
+      const confirmed =
+        confirm(
+          "確定要" +
+          action +
+          "這個帳號嗎？"
+        );
+
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      try {
+
+        await apiFetch(
+          "/api/admin/users/" +
+          userId +
+          "/enabled" +
+          "?enabled=" +
+          enabled,
+          {
+            method: "PATCH"
+          }
+        );
+
+
+        await loadUsers();
+
+      } catch (error) {
+
+        alert(
+          action +
+          "失敗：" +
+          error.message
+        );
+
+      }
+
+    }
+
+
+
+    /* ==========================================
+       管理員：永久刪除測試帳號
+       ========================================== */
+
+    async function deleteUser(
+      userId,
+      username
+    ) {
+
+      const firstConfirmed =
+        confirm(
+          "確定要永久刪除測試帳號「" +
+          username +
+          "」嗎？\\n\\n刪除後無法復原。"
+        );
+
+
+      if (!firstConfirmed) {
+        return;
+      }
+
+
+      const secondConfirmed =
+        confirm(
+          "最後確認：真的要永久刪除「" +
+          username +
+          "」嗎？"
+        );
+
+
+      if (!secondConfirmed) {
+        return;
+      }
+
+
+      try {
+
+        await apiFetch(
+          "/api/admin/users/" +
+          userId,
+          {
+            method: "DELETE"
+          }
+        );
+
+
+        await loadUsers();
+
+      } catch (error) {
+
+        alert(
+          "刪除失敗：" +
+          error.message
+        );
+
+      }
+
+    }
+
+
+
+    /* ==========================================
+       啟動
+       ========================================== */
+
+    restoreLogin();
+
+  </script>
+
+</body>
+</html>
